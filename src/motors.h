@@ -1,35 +1,35 @@
 class motor
 {
-    private:
-    int PWM;
-    int PWM_C;
-    int Dir_A;
-    int Dir_B;
-    bool rev;
     public:
-    void setUp(int Channel,bool reverse,int PWM_Pin);
-    void setSpeed(float speed);
+    motor(char* const name = "Motor");
+    virtual void setSpeed(double) = 0;
+    void printName()const;
+    private:
+    char* const name;
 };
 
-void motor::setUp(int Channel,bool reverse,int PWM_Pin)
+motor::motor(char* const name):name(name)
 {
-    PWM_C = Channel;
-    rev = reverse;
-    PWM = PWM_Pin;
+
 }
 
-void motor::setSpeed(float speed)
-{   
-    if(rev)speed *= -1;
-    if(speed > 0)
-    {
-        digitalWrite(Dir_A,0);
-        digitalWrite(Dir_B,1);
-    }
-    else
-    {
-        digitalWrite(Dir_A,1);
-        digitalWrite(Dir_B,0);
-    }
-    ledcWrite(PWM_C,speed);
+class L298N : public motor
+{
+    public:
+    L298N(int pinA, int pinB, int pinP, char* const name);
+    private:
+    int pinA;
+    int pinB;
+    int pinP;
+    virtual void setSpeed(double)override;
+};
+
+L298N::L298N(int pinA, int pinB, int pinP, char* const name):motor(name), pinA(pinA), pinB(pinB), pinP(pinP)
+{
+
+}
+
+void L298N::setSpeed(double)
+{
+    
 }
