@@ -1,0 +1,7 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#define L298N_PWM_FREQ 100
+#define L298N_TIMER_RESOLUTION 8
+
+#endif
