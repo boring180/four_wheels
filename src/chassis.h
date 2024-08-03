@@ -39,17 +39,17 @@ void chassis::normSpeedVector(double& x, double& y, double& theta)
         theta = (theta < 0.1 && theta > -0.1)? 0: theta;
     }
 
-class tank: public chassis
+class arcade: public chassis
 {
     public:
-    tank(motor* LF, motor* LB, motor* RF, motor* RB);
+    arcade(motor* LF, motor* LB, motor* RF, motor* RB);
     virtual void setSpeedVector(double x, double y, double theta)override;
 };
 
-tank::tank(motor* LF, motor* LB, motor* RF, motor* RB)
+arcade::arcade(motor* LF, motor* LB, motor* RF, motor* RB)
 :chassis(LF, LB, RF, RB){ }
 
-void tank::setSpeedVector(double x, double y, double theta)
+void arcade::setSpeedVector(double x, double y, double theta)
 {
     normSpeedVector(x, y, theta);
     LF->setSpeed((x + theta) / 2);

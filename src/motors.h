@@ -38,6 +38,7 @@ class L298N : public motor
     public:
     L298N(int pinA, int pinB, int pinP, int ledc, const char* name = "L298N", bool reverse = "false");
     virtual void setSpeed(double)override;
+    void elecBreak();
     private:
     int pinA;
     int pinB;
@@ -67,6 +68,48 @@ void L298N::setSpeed(double speed)
     {
         digitalWrite(pinA, 0);
         digitalWrite(pinB, 1);
+    }
+}
+
+void L298N::elecBreak()
+{
+    digitalWrite(pinA, 1);
+    digitalWrite(pinB, 1);
+}
+
+class AT8236Mini : public motor
+{
+    public:
+    AT8236Mini(int pinA, int pinB, int ledcA, int ledcB, const char* name = "AT8236", bool reverse = "false");
+    virtual void setSpeed(double)override;
+    private:
+    int pinA;
+    int pinB;
+    int ledcA;
+    int ledcB;
+};
+
+AT8236Mini::AT8236Mini(int pinA, int pinB, int ledcA, int ledcB, const char* name, bool reverse)
+:motor(name, reverse), pinA(pinA), pinB(pinB), ledcA(ledcA), ledcB(ledcB)
+{
+    ledcSetup(ledcA, AT8236Mini_PWM_FREQ, AT8236Mini_TIMER_RESOLUTION);
+    ledcSetup(ledcB, AT8236Mini_PWM_FREQ, AT8236Mini_TIMER_RESOLUTION);
+    ledcAttachPin(pinA, ledcA);
+    ledcAttachPin(pinB, ledcB);
+}
+
+void AT8236Mini::setSpeed(double speed)
+{
+    if (reverse) speed *= -1;
+    if(speed > 0)
+    {
+        ledcWrite(ledcA, abs(speed) * pow(2, L298N_TIMER_RESOLUTION));
+        ledcWrite(ledcB, 0);
+    }
+    else
+    {
+        ledcWrite(ledcA, 0);
+        ledcWrite(ledcB, abs(speed) * pow(2, L298N_TIMER_RESOLUTION));
     }
 }
 

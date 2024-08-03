@@ -7,6 +7,9 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
 
+  testMotor = new AT8236Mini();
+  return;
+
   RF = new L298N(27,14,12,0);
   LF = new L298N(25,26,33,1);
   LF->setReverse();
@@ -27,6 +30,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+
+  return;
   double x = remote->readValue(0);
   double theta = remote->readValue(1);
   double y = remote->readValue(2);

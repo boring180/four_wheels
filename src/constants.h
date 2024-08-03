@@ -4,4 +4,8 @@
 #define L298N_PWM_FREQ 100
 #define L298N_TIMER_RESOLUTION 8
 
+
+#define AT8236Mini_PWM_FREQ 100
+#define AT8236Mini_TIMER_RESOLUTION 8
+
 #endif
