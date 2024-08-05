@@ -2,6 +2,7 @@
 #define CHASSIS_H
 
 #include "motors.h"
+#include "pid.h"
 
 class chassis
 {
@@ -73,17 +74,61 @@ mechanum::mechanum(motor* LF, motor* LB, motor* RF, motor* RB)
 void mechanum::setSpeedVector(double x, double y, double theta)
 {
     normSpeedVector(x, y, theta);
-    RF->setSpeed(y - x - theta);
-    LF->setSpeed(y + x + theta);
-    RB->setSpeed(y - x + theta);
-    LB->setSpeed(y + x - theta);
+    RF->setSpeed(y + x + theta);
+    LF->setSpeed(y - x - theta);
+    RB->setSpeed(y + x + theta);
+    LB->setSpeed(y - x - theta);
 }
 
 class omni: public chassis
 {
     public:
     virtual void setSpeedVector(double x, double y, double theta)override;
+    omni(motor* LF, motor* LB, motor* RF, motor* RB);
 };
+
+omni::omni(motor* LF, motor* LB, motor* RF, motor* RB)
+:chassis(LF, LB, RF, RB)
+{
+
+}
+
+void omni::setSpeedVector(double x, double y, double theta)
+{
+    normSpeedVector(x, y, theta);
+    RF->setSpeed(y - x - theta);
+    LF->setSpeed(y + x + theta);
+    RB->setSpeed(y - x + theta);
+    LB->setSpeed(y + x - theta);
+}
+
+class headlessOmni: public omni
+{
+    private:
+    double orientation = 0;
+    pid* pidControl;
+    public:
+    void setHeadless(double x, double y, double theta, bool headless = true);
+    headlessOmni(motor* LF, motor* LB, motor* RF, motor* RB);
+    void setPid(double kp = 1, double ki = 0, double kd = 0);
+};
+
+headlessOmni::headlessOmni(motor* LF, motor* LB, motor* RF, motor* RB)
+:omni(LF, LB, RF, RB)
+{
+    pidControl = new pid();
+} 
+
+void headlessOmni::setPid(double kp, double ki, double kd)
+{
+    this->pidControl->setPid(kp, ki, kd);
+}
+
+void headlessOmni::setHeadless(double x, double y, double theta, bool headless)
+{
+    double error;
+    pidControl->compute(error)
+}
 
 class fixAngleOmni: public chassis
 {

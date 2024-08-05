@@ -7,7 +7,7 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
 
-  testMotor = new AT8236Mini();
+  //testMotor = new AT8236Mini();
   return;
 
   RF = new L298N(27,14,12,0);
