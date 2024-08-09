@@ -7,19 +7,16 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
 
-  //testMotor = new AT8236Mini();
-  return;
-
-  RF = new L298N(27,14,12,0);
-  LF = new L298N(25,26,33,1);
-  LF->setReverse();
-  RB = new L298N(1,22,23,2);
-  RB->setReverse();
+  RB = new L298N(27,14,12,0);
+  RF = new L298N(25,26,33,1);
+  RF->setReverse();
+  LF = new L298N(1,22,23,2);
   LB = new L298N(19,18,5,3);
   LB->setReverse();
 
-  chassis = new mechanum(LF, LB, RF, RB);
+  chassis = new omni(LF, LB, RF, RB);
 
+  return;
   int* RCPin = new int[3];
   RCPin[0] = 2;
   RCPin[1] = 15;
@@ -30,16 +27,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-
-  return;
-  double x = remote->readValue(0);
-  double theta = remote->readValue(1);
-  double y = remote->readValue(2);
-  chassis->setSpeedVector(x ,y , theta);
-  //LF->setSpeed(speed);
-  //RF->setSpeed(speed);
-  //LB->setSpeed(speed);
-  //RB->setSpeed(speed);
+  chassis->setSpeedVector(0, 1, 0);
 }
 
 // put function definitions here:

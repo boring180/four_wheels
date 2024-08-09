@@ -4,7 +4,7 @@
 #include "chassis.h"
 #include "remoteControl.h"
 
-motor* testMotor;
+motor* X;
 
 receiver* remote;
 motor* LF;

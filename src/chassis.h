@@ -23,22 +23,26 @@ chassis::chassis(motor* LF, motor* LB, motor* RF, motor* RB)
 :LF(LF), LB(LB), RF(RF), RB(RB){ }
 
 void chassis::normSpeedVector(double& x, double& y, double& theta)
-    {
-        x = (x * 2) - 1;
-        x = (x > 1.0)? 1.0 : x;
-        x = (x < -1.0)? -1.0 : x;
-        x = (x < 0.1 && x > -0.1)? 0: x;
+{
+    // X = (-1, 1)
+    x = (x * 2) - 1;
+    x = (x > 1.0)? 1.0 : x;
+    x = (x < -1.0)? -1.0 : x;
+    x = (x < 0.1 && x > -0.1)? 0: x;
 
-        y = (y * 2) - 1;
-        y = (y > 1.0)? 1.0 : y;
-        y = (y < -1.0)? -1.0 : y;
-        y = (y < 0.1 && y > -0.1)? 0: y;
+    // Y = (-1, 1)
+    y = (y * 2) - 1;
+    y = (y > 1.0)? 1.0 : y;
+    y = (y < -1.0)? -1.0 : y;
+    y = (y < 0.1 && y > -0.1)? 0: y;
 
-        theta = (theta * 2) - 1;
-        theta = (theta > 1.0)? 1.0 : theta;
-        theta = (theta < -1.0)? -1.0 : theta;
-        theta = (theta < 0.1 && theta > -0.1)? 0: theta;
-    }
+    theta = (theta * 2) - 1;
+    theta = (theta > 1.0)? 1.0 : theta;
+    theta = (theta < -1.0)? -1.0 : theta;
+    theta = (theta < 0.1 && theta > -0.1)? 0: theta;
+
+    
+}
 
 class arcade: public chassis
 {
@@ -108,7 +112,7 @@ class headlessOmni: public omni
     double orientation = 0;
     pid* pidControl;
     public:
-    void setHeadless(double x, double y, double theta, bool headless = true);
+    void setHeadless(double x, double y, double theta, double currrentOrientation, bool headless = false);
     headlessOmni(motor* LF, motor* LB, motor* RF, motor* RB);
     void setPid(double kp = 1, double ki = 0, double kd = 0);
 };
@@ -124,10 +128,22 @@ void headlessOmni::setPid(double kp, double ki, double kd)
     this->pidControl->setPid(kp, ki, kd);
 }
 
-void headlessOmni::setHeadless(double x, double y, double theta, bool headless)
+void headlessOmni::setHeadless(double x, double y, double theta, double currrentOrientation, bool headless)
 {
+    if (!headless)
+    {
+        setSpeedVector(x, y, theta);
+        return;
+    }
+    // Todo compute headless vector
+    orientation += theta / 10;
+    orientation = (orientation > M_PI)? 0 : orientation;
+    orientation = (orientation < 0)? M_PI : orientation;
+
     double error;
-    pidControl->compute(error)
+    double headlessX = x * cos(orientation) - y * sin(orientation);
+    double headlessY = x * sin(orientation) + y * cos(orientation);
+    setSpeedVector(headlessX, headlessY, pidControl->compute(error));
 }
 
 class fixAngleOmni: public chassis
