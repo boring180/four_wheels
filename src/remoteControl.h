@@ -8,6 +8,7 @@ class receiver
     virtual void printValue() const = 0;
     void printName()const;
     virtual double readValue(int) const = 0;
+    virtual bool readSwitch(int) const = 0;
     ~receiver();
     private:
     const char* name;
@@ -43,6 +44,7 @@ class F_08A : public receiver
     public:
     F_08A(int channelNum, int* inputPorts, int timeOut, const char* name = "F_08A");
     double readValue(int) const override;
+    bool readSwitch(int)const override;
     void printValue() const override;
     private:
     const int timeOut = 40000;
@@ -62,7 +64,12 @@ F_08A::F_08A(int channelNum, int* inputPorts, int timeOut, const char* name)
 double F_08A::readValue(int channel) const
 {
     //return pulseIn(ports[channel], HIGH);
-    return (pulseIn(ports[channel], HIGH) - offSetPeriod) / fullPeriod;
+    return (pulseIn(ports[channel], HIGH, timeOut) - offSetPeriod) / fullPeriod;
+}
+
+bool F_08A::readSwitch(int channel)const
+{
+    return pulseIn(ports[channel], HIGH) > offSetPeriod;
 }
 
 void F_08A::printValue() const

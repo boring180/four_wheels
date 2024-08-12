@@ -22,6 +22,7 @@ class chassis
 chassis::chassis(motor* LF, motor* LB, motor* RF, motor* RB)
 :LF(LF), LB(LB), RF(RF), RB(RB){ }
 
+// Normalize the speed vector from the input(0,1) to (-1,1)
 void chassis::normSpeedVector(double& x, double& y, double& theta)
 {
     // X = (-1, 1)
